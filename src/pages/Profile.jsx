@@ -10,8 +10,8 @@ export default function Profile() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: 'John Doe',
-      email: 'john@example.com',
+      name: 'Essam 210041169',
+      email: 'essam@example.com',
       role: 'User',
     },
   })
