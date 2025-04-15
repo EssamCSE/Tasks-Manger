@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
+import { authService } from '../api/auth'
 
 export default function Register() {
   const [error, setError] = useState('')
@@ -14,11 +15,20 @@ export default function Register() {
 
   const onSubmit = async (data) => {
     try {
-      // TODO: Implement actual registration logic with backend
-      console.log('Registration data:', data)
+      await authService.register({
+        name: data.name,
+        email: data.email,
+        password: data.password
+      })
       navigate('/login')
-    } catch {
-      setError('Registration failed')
+    } catch (err) {
+      if (err.response?.data?.message) {
+        setError(err.response.data.message)
+      } else if (err.message.includes('Network Error')) {
+        setError('Network error - please check your connection')
+      } else {
+        setError('Registration failed - please check your details')
+      }
     }
   }
 

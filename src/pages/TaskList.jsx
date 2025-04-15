@@ -1,39 +1,34 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { PlusIcon, FunnelIcon } from '@heroicons/react/24/outline'
+import { taskService } from '../api/tasks'
 
 export default function TaskList() {
-  const [tasks] = useState([
-    {
-      id: 1,
-      title: 'Complete project proposal',
-      description: 'Write and submit the project proposal document',
-      priority: 'High',
-      category: 'Work',
-      dueDate: '2025-04-10',
-      status: 'In Progress',
-    },
-    {
-      id: 2,
-      title: 'Review documentation',
-      description: 'Review and update the API documentation',
-      priority: 'Medium',
-      category: 'Documentation',
-      dueDate: '2025-04-15',
-      status: 'Pending',
-    },
-    {
-      id: 3,
-      title: 'Final project proposal',
-      description: 'Prepare agenda and materials for team meeting',
-      priority: 'High',
-      category: 'Presentation',
-      dueDate: '2025-04-08',
-      status: 'Completed',
-    },
-  ])
+  const [tasks, setTasks] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const data = await taskService.getAllTasks()
+        setTasks(data)
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to fetch tasks')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchTasks()
+  }, [])
+
+  if (loading) return <div className="text-center py-4">Loading...</div>
+  if (error) return <div className="text-center text-red-600 py-4">{error.message || 'Failed to fetch tasks'}</div>
+
+
 
   const [filters, setFilters] = useState({
+    search: '',
     priority: '',
     category: '',
     status: '',

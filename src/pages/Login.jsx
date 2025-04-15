@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
+import { authService } from '../api/auth'
 
 export default function Login({ setIsAuthenticated }) {
   const [error, setError] = useState('')
@@ -13,12 +14,11 @@ export default function Login({ setIsAuthenticated }) {
 
   const onSubmit = async (data) => {
     try {
-      // TODO: Implement actual login logic with backend
-      console.log('Login data:', data)
+      await authService.login(data.email, data.password)
       setIsAuthenticated(true)
       navigate('/')
-    } catch {
-      setError('Invalid credentials')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Invalid credentials')
     }
   }
 
